@@ -25,13 +25,14 @@ var PeregrineJS = function (_, Kotlin) {
     interfaces: []
   };
   function main(args) {
-    var tmp$;
+    var tmp$, tmp$_0;
     println('hello - im here to sign you into a tiss course');
     if (equals(document.URL, 'https://tiss.tuwien.ac.at/education/course/courseRegistration.xhtml') || equals(document.URL, 'https://tiss.tuwien.ac.at/education/course/groupList.xhtml')) {
       println('clicking');
       var buttons = document.getElementsByTagName('input');
       println(buttons.length);
       var button = Kotlin.isType(tmp$ = buttons[0], HTMLInputElement) ? tmp$ : throwCCE();
+      println((tmp$_0 = buttons[0]) != null ? tmp$_0.id : null);
       button.click();
     }
     var url = document.URL;

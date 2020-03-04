@@ -4,7 +4,7 @@ import kotlin.collections.HashMap
 import kotlin.math.pow
 
 val COMMANDS = HashMap<String, String>()
-val COMMAND_STRINGS = arrayOf<String>("commands", "newEvent", "startChecking", "quit")
+val COMMAND_STRINGS = arrayOf<String>("commands", "newEvent", "quit", "currentEvents")
 val CIN = Scanner(System.`in`)
 var QUIT = false
 
@@ -26,16 +26,15 @@ fun menu(command : String){
     when(command){
         COMMAND_STRINGS[0] -> printCommands()
         COMMAND_STRINGS[1] -> newEvent()
-        COMMAND_STRINGS[2] -> startChecking()
-        COMMAND_STRINGS[3] -> QUIT = true
+        COMMAND_STRINGS[2] -> QUIT = true
+        COMMAND_STRINGS[3] -> currentEvents()
     }
 }
 
 fun fillCommands(){
     COMMANDS[COMMAND_STRINGS[0]] = "Prints all possible commands"
     COMMANDS[COMMAND_STRINGS[1]] = "Adds an Event to the EventList"
-    COMMANDS[COMMAND_STRINGS[2]] = "starts looking for Events"
-    COMMANDS[COMMAND_STRINGS[3]] = "terminates the program"
+    COMMANDS[COMMAND_STRINGS[2]] = "terminates the program"
 }
 
 fun printCommands(){
@@ -45,23 +44,19 @@ fun printCommands(){
 
 fun newEvent(){
 
-    /*
     println("When should I click?")
-    val time = CIN.nextLong()
-    */
+    var time = CIN.nextLong()
 
-    val time = System.currentTimeMillis() + 10_000
-    println("imma click in 10 seconds")
-
+    if(time == 1.toLong()){
+        time -= System.currentTimeMillis() % 360_000             //gets the previous "full" hour
+        time += 360_000
+    }else if(time < 60) {                                       //clicks in time seconds (cant be 1 or > 2)
+        time = System.currentTimeMillis() + time * 1_000
+    }
 
 
     println("Which url is the Button at?")
     val url = CIN.next()
-
-    /*
-    val url = "https://tiss.tuwien.ac.at/education/course/groupList.xhtml?dswid=7848&dsrid=175&courseNr=104263&semester=2020S"
-    println("url defaulted to $url")
-     */
 
     println("What is the group's Name?")
     val groupName = CIN.next()
@@ -69,50 +64,8 @@ fun newEvent(){
     EVENTS.add(ClickEvent(time, url, groupName))
 }
 
-fun startChecking(){
-    Thread {
-        println("started checking")
-
-        while(!QUIT) {
-            checkOnce()
-            Thread.sleep(200)
-        }
-    }.start()
-
-
-
+fun currentEvents(){
+    println("""
+        
+    """.trimIndent())
 }
-
-fun checkOnce(){
-    val elementsToDelete = ArrayList<ClickEvent>()
-
-    for(event in EVENTS){
-        if(event.isDue){
-            handleEvent(clickEvent = event)
-            elementsToDelete.add(event)
-        } //possible because the list is sorted by time
-        else break
-    }
-
-    //to avoid concurrent exeption
-    for(event in elementsToDelete){
-        EVENTS.remove(event)
-    }
-
-}
-
-fun handleEvent(clickEvent: ClickEvent){
-
-    val courseNrRegex = Regex("courseNr")
-    val match = courseNrRegex.find(clickEvent.url)
-    val numberRange = match!!.range.endInclusive + 2 .. match.range.endInclusive + 7
-    val courseNr = clickEvent.url.substring(numberRange)
-    println(courseNr)
-
-    val path = Paths.get("urlColumnMatches/match$courseNr.JSON")
-    clickEvent.urlColumnJSONMap(path)
-
-    Runtime.getRuntime().exec("$BROWSER_PATH ${clickEvent.url}")
-    println("window '${clickEvent.url}' started")
-}
-

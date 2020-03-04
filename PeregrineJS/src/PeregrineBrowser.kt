@@ -19,9 +19,9 @@ fun main(args: Array<String>) {
         println(buttons.length)
 
         val button = buttons[0] as HTMLInputElement
+        println(buttons[0]?.id)
+
         button.click()
-
-
     }
 
     val url = document.URL
