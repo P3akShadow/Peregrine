@@ -4,7 +4,7 @@ import kotlin.collections.HashMap
 import kotlin.math.pow
 
 val COMMANDS = HashMap<String, String>()
-val COMMAND_STRINGS = arrayOf<String>("commands", "newEvent", "quit", "currentEvents")
+val COMMAND_STRINGS = arrayOf("commands", "newEvent", "quit", "currentEvents")
 val CIN = Scanner(System.`in`)
 var QUIT = false
 
@@ -48,9 +48,10 @@ fun newEvent(){
     var time = CIN.nextLong()
 
     if(time == 1.toLong()){
-        time -= System.currentTimeMillis() % 360_000             //gets the previous "full" hour
-        time += 360_000
-    }else if(time < 60) {                                       //clicks in time seconds (cant be 1 or > 2)
+        time = System.currentTimeMillis()
+        time -= System.currentTimeMillis() % 3_600_000             //gets the previous "full" hour
+        time += 3_600_010                                          //10 extra millis to ensure being too early
+    }else if(time < 60) {                                        //clicks in time seconds (cant be 1 or > 2)
         time = System.currentTimeMillis() + time * 1_000
     }
 
@@ -65,7 +66,12 @@ fun newEvent(){
 }
 
 fun currentEvents(){
-    println("""
-        
-    """.trimIndent())
+    println("Number of events: ${EVENTS.size}")
+
+    for(event in EVENTS) {
+        println("****************************************")
+        println(event)
+        println("****************************************")
+    }
+
 }

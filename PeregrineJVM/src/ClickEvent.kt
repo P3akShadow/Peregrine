@@ -27,7 +27,7 @@ class ClickEvent (val time : Long,
             }
 
             handleEvent()
-        }.run()
+        }.start()
     }
 
     fun urlColumnJSONMap(path : Path){
@@ -69,7 +69,7 @@ class ClickEvent (val time : Long,
         return("""
             URL: $url
             groupName: $groupName
-            this Event will be due on 
+            this Event will be due in ${timeUntilDue / 60_000} minutes and ${(timeUntilDue % 60_000)/1_000} seconds 
         """.trimIndent())
 
 
